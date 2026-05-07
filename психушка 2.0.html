@@ -1,0 +1,747 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Клініка «Червоний Хрест» | Ти вже тут</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Creepster&family=VT323&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;user-select:none}
+:root{
+  --red:#8b0000;--bright:#ff3333;--dim:#3a0000;--text:#cc4444;
+  --bg:#0a0000;--card:rgba(5,0,0,0.88);--gold:#6a0000;
+}
+body{
+  background:radial-gradient(ellipse at 30% 20%,#1a0000,#000);
+  color:var(--text);font-family:'Special Elite',monospace;
+  min-height:100vh;overflow-x:hidden;position:relative;
+  line-height:1.55;cursor:none;
+}
+body::before{
+  content:"";position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.15) 2px,rgba(0,0,0,0.15) 4px);
+  pointer-events:none;z-index:0;
+}
+body.shake{animation:shk .3s ease}
+@keyframes shk{0%,100%{transform:translate(0)}25%{transform:translate(-4px,2px)}75%{transform:translate(4px,-2px)}}
+ 
+#flash{position:fixed;inset:0;background:#8b0000;opacity:0;pointer-events:none;z-index:9998;transition:opacity .05s}
+ 
+.splat{position:fixed;pointer-events:none;z-index:9997;font-size:1.5rem;animation:splatAnim .8s forwards}
+@keyframes splatAnim{0%{opacity:1;transform:scale(.5) rotate(0)}100%{opacity:0;transform:scale(2.5) rotate(45deg)}}
+ 
+#cursor{position:fixed;width:22px;height:22px;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+#cursor::before,#cursor::after{content:"";position:absolute;background:#cc0000}
+#cursor::before{width:2px;height:100%;left:50%;transform:translateX(-50%)}
+#cursor::after{height:2px;width:100%;top:50%;transform:translateY(-50%)}
+ 
+.trail{position:fixed;width:6px;height:6px;background:#8b0000;border-radius:50%;pointer-events:none;z-index:9990;animation:trailFade .6s forwards}
+@keyframes trailFade{to{opacity:0;transform:scale(0)}}
+ 
+.wrap{max-width:900px;margin:0 auto;padding:1.4rem;position:relative;z-index:5}
+ 
+header{text-align:center;border-bottom:2px solid var(--red);padding-bottom:1.2rem;margin-bottom:1.5rem}
+#mainTitle{font-family:'Creepster',cursive;font-size:2.8rem;letter-spacing:5px;color:#c44;display:inline-block;text-shadow:6px 6px 0 #3a0000}
+#mainTitle.glitch{animation:glitchAnim .2s steps(2)}
+@keyframes glitchAnim{
+  0%{text-shadow:2px 0 #ff0000,-2px 0 #0000ff;clip-path:polygon(0 0,100% 0,100% 35%,0 35%)}
+  25%{text-shadow:-2px 0 #ff0000,2px 0 #0000ff;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%)}
+  50%{text-shadow:2px 2px #ff0000,-2px -2px #0000ff;clip-path:polygon(0 40%,100% 40%,100% 55%,0 55%)}
+  100%{text-shadow:6px 6px 0 #3a0000;clip-path:none}
+}
+.subhead{font-family:'VT323',monospace;font-size:1.4rem;color:#aa3333;letter-spacing:3px;margin-top:.5rem}
+ 
+.sanity-wrap{display:flex;align-items:center;gap:10px;justify-content:center;margin:.8rem 0}
+.sanity-label{font-family:'VT323',monospace;font-size:1rem;color:#aa3333;letter-spacing:2px}
+.sanity-bar{flex:1;max-width:300px;height:14px;background:#1a0000;border:1px solid var(--red);border-radius:2px;overflow:hidden}
+.sanity-fill{height:100%;width:100%;background:linear-gradient(90deg,#8b0000,#ff3333);transition:width .5s;border-radius:2px}
+.sanity-val{font-family:'VT323',monospace;font-size:1.1rem;color:#ff4444;min-width:40px}
+ 
+.card{background:var(--card);border-left:5px solid var(--red);border-radius:0 12px 12px 0;
+  padding:1.3rem;margin:1rem 0;box-shadow:0 0 20px rgba(139,0,0,.3);
+  transition:box-shadow .2s,transform .2s;
+  animation:flicker 8s infinite}
+.card:hover{box-shadow:0 0 35px rgba(255,0,0,.5);transform:translateX(3px)}
+.card:nth-child(2){animation-delay:2s}
+.card:nth-child(3){animation-delay:4s}
+.card:nth-child(4){animation-delay:6s}
+@keyframes flicker{
+  0%,100%{opacity:1}2%{opacity:.7}4%{opacity:1}8%{opacity:.85}
+  15%{opacity:1}20%{opacity:.6}22%{opacity:1}60%{opacity:.9}62%{opacity:1}
+}
+.card h2{font-family:'VT323',monospace;font-size:1.7rem;text-align:center;color:#d44;
+  letter-spacing:3px;margin-bottom:.8rem}
+ 
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.9rem;letter-spacing:2px;margin-bottom:.3rem;color:#aa4444}
+.fg input,.fg select{width:100%;padding:9px 12px;background:#100000;border:1px solid var(--red);
+  color:#dd8888;font-family:'Special Elite',monospace;font-size:.9rem;border-radius:6px;outline:none;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:#ff4444;box-shadow:0 0 8px rgba(255,0,0,.4)}
+.fg input::placeholder{color:#662222;font-style:italic}
+ 
+.btn{width:100%;padding:12px;background:linear-gradient(135deg,#3a0000,#1a0000);
+  border:1px solid var(--red);color:#dd6666;font-family:'VT323',monospace;font-size:1.5rem;
+  letter-spacing:4px;border-radius:8px;cursor:none;transition:.2s;display:block;text-align:center}
+.btn:hover{background:#5a0000;color:#000;border-color:#ff8888;box-shadow:0 0 20px red;letter-spacing:6px}
+ 
+.counters{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:.8rem 0}
+.count-box{background:#0d0000;border:1px solid #3a0000;border-radius:8px;padding:.7rem;text-align:center;cursor:none}
+.count-num{font-family:'VT323',monospace;font-size:2.2rem;color:#ff4444;display:block}
+.count-label{font-size:.7rem;color:#663333;letter-spacing:1px}
+ 
+.timer-box{text-align:center;padding:1rem;background:#0d0000;border-radius:12px;border:1px solid #4a0000}
+#timerDisplay{font-family:'VT323',monospace;font-size:3.5rem;color:#ff4444;letter-spacing:6px}
+.timer-label{font-size:.8rem;color:#663333;letter-spacing:2px;margin-top:.3rem}
+ 
+.treatment-wrap{margin:.8rem 0}
+.treatment-bar{height:18px;background:#0a0000;border:1px solid #4a0000;border-radius:4px;overflow:hidden}
+.treatment-fill{height:100%;background:linear-gradient(90deg,#8b0000,#aa0000,#cc0000);
+  transition:width 1s;position:relative}
+.treatment-fill::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent,transparent 10px,rgba(0,0,0,.2) 10px,rgba(0,0,0,.2) 20px);
+  animation:treatScroll 1s linear infinite}
+@keyframes treatScroll{to{background-position:20px 0}}
+ 
+.hazard-strip{height:8px;background:repeating-linear-gradient(45deg,#8b0000 0,#8b0000 10px,#000 10px,#000 20px);
+  margin:.5rem 0;border-radius:4px;animation:hazardScroll 3s linear infinite}
+@keyframes hazardScroll{to{background-position:40px 0}}
+ 
+#patientList{max-height:180px;overflow-y:auto;margin-top:.8rem;scrollbar-width:thin;scrollbar-color:#8b0000 #0a0000}
+#patientList::-webkit-scrollbar{width:4px}
+#patientList::-webkit-scrollbar-track{background:#0a0000}
+#patientList::-webkit-scrollbar-thumb{background:#8b0000}
+.patient-row{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 10px;border-bottom:1px solid #2a0000;font-size:.85rem;
+  animation:rowIn .3s ease}
+@keyframes rowIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+.patient-row:hover{background:#1a0000}
+.p-badge{font-family:'VT323',monospace;font-size:.9rem;padding:2px 10px;
+  border-radius:10px;border:1px solid}
+.p-badge.critical{color:#ff4444;border-color:#ff4444}
+.p-badge.stable{color:#aa6644;border-color:#aa6644}
+.p-badge.deceased{color:#555;border-color:#444;text-decoration:line-through}
+ 
+.proc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-top:.8rem}
+.proc-item{background:#100000;border:1px solid #4a0000;border-radius:8px;padding:.8rem;
+  text-align:center;cursor:none;transition:.2s;position:relative;overflow:hidden}
+.proc-item::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(139,0,0,.15));opacity:0;transition:.2s}
+.proc-item:hover::before{opacity:1}
+.proc-item:hover{border-color:#cc0000;box-shadow:0 0 15px rgba(200,0,0,.4);transform:scale(1.04)}
+.proc-icon{font-size:2rem;display:block;margin-bottom:.3rem}
+.proc-name{font-family:'VT323',monospace;font-size:1.05rem;letter-spacing:1px;color:#cc4444}
+.proc-price{font-size:.72rem;color:#663333;margin-top:.2rem}
+.proc-bar{height:3px;background:#1a0000;border-radius:2px;margin-top:.5rem;overflow:hidden}
+.proc-fill{height:100%;background:var(--red);width:0%;transition:width .3s}
+ 
+#secretPanel{display:none;background:rgba(0,40,0,.25);border:1px solid #004400;
+  border-radius:8px;padding:1rem;margin-top:.8rem}
+#secretPanel.visible{display:block;animation:rowIn .3s ease}
+#secretCode{letter-spacing:6px;font-family:'VT323',monospace;font-size:1.6rem;color:#00cc00;text-align:center;margin-top:.4rem}
+ 
+.toast{position:fixed;bottom:22%;left:50%;transform:translateX(-50%);
+  background:#050000;border:2px solid #8b0000;padding:.8rem 1.8rem;
+  border-radius:15px;color:#ff8888;font-family:'VT323',monospace;font-size:1.3rem;
+  text-align:center;z-index:9995;box-shadow:0 0 30px rgba(200,0,0,.7);
+  pointer-events:none;white-space:nowrap;max-width:90vw}
+.toast.in{animation:toastIn .2s ease forwards}
+.toast.out{animation:toastOut .5s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) scale(.7)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(-50%) scale(.8)}}
+ 
+#paAnnounce{position:fixed;top:0;left:0;right:0;
+  background:linear-gradient(90deg,#0a0000,#1a0000,#0a0000);
+  border-bottom:2px solid #6a0000;color:#cc4444;font-family:'VT323',monospace;
+  font-size:1.1rem;letter-spacing:2px;padding:.45rem 1rem;text-align:center;
+  z-index:9994;transform:translateY(-100%);transition:transform .3s}
+#paAnnounce.show{transform:translateY(0)}
+ 
+.whisper{position:fixed;pointer-events:none;z-index:9993;
+  font-family:'VT323',monospace;font-size:1.1rem;color:rgba(180,0,0,.65);
+  animation:whisperAnim 4s forwards;white-space:nowrap}
+@keyframes whisperAnim{
+  0%{opacity:0;transform:translateY(0)}
+  20%{opacity:.9}80%{opacity:.4}
+  100%{opacity:0;transform:translateY(-30px)}
+}
+ 
+.floater{position:fixed;pointer-events:none;z-index:2;animation:floatUp linear forwards;opacity:0}
+@keyframes floatUp{
+  0%{opacity:0;transform:translateY(0) rotate(0)}
+  10%{opacity:.6}90%{opacity:.3}
+  100%{opacity:0;transform:translateY(-110vh) rotate(360deg)}
+}
+ 
+footer{text-align:center;margin-top:2rem;padding:1.2rem;
+  border-top:1px dashed #4a0000;font-size:.85rem;color:#662222;
+  font-family:'VT323',monospace;letter-spacing:2px}
+ 
+/* BLOOD DRIP зверху */
+.blood-drip{position:fixed;top:-20px;width:4px;background:linear-gradient(to bottom,#b30000,#4a0000);
+  border-radius:0 0 4px 4px;animation:drip ease-in infinite;z-index:3;pointer-events:none}
+@keyframes drip{
+  0%{top:-20px;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:110vh;opacity:0}
+}
+ 
+@media(max-width:600px){
+  #mainTitle{font-size:1.8rem}
+  #timerDisplay{font-size:2.4rem}
+  .counters{grid-template-columns:repeat(3,1fr)}
+  .proc-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+ 
+<div id="flash"></div>
+<div id="cursor"></div>
+<div id="paAnnounce">📢 УВАГА: ПАЦІЄНТ У ПАЛАТІ 6 ЗНОВУ СПРОБУВАВ ВТЕКТИ. БЛОКУЄМО ВСІ ВИХОДИ.</div>
+ 
+<div class="wrap">
+<header style="padding-top:2.2rem">
+  <div id="mainTitle">Клініка «Червоний Хрест»</div>
+  <div class="subhead" id="subtitle">— Ти вже тут. Назавжди. —</div>
+  <div class="sanity-wrap" style="margin-top:.9rem">
+    <span class="sanity-label">🧠 РОЗУМ:</span>
+    <div class="sanity-bar"><div class="sanity-fill" id="sanityFill"></div></div>
+    <span class="sanity-val" id="sanityVal">100%</span>
+  </div>
+</header>
+ 
+<div class="counters">
+  <div class="count-box">
+    <span class="count-num" id="cProcedures">0</span>
+    <div class="count-label">ПРОЦЕДУРИ</div>
+  </div>
+  <div class="count-box">
+    <span class="count-num" id="cPatients">0</span>
+    <div class="count-label">ПАЦІЄНТИ</div>
+  </div>
+  <div class="count-box" id="daysBox">
+    <span class="count-num" id="cDays">-1</span>
+    <div class="count-label">ДНІВ БЕЗ ІНЦИДЕНТУ</div>
+  </div>
+</div>
+ 
+<div class="hazard-strip"></div>
+ 
+<!-- ТАЙМЕР -->
+<div class="card">
+  <h2>⏱ НАСТУПНА ПРОЦЕДУРА</h2>
+  <div class="timer-box">
+    <div id="timerDisplay">00:00:00</div>
+    <div class="timer-label">ЗВОРОТНИЙ ВІДЛІК ДО ОПЕРАЦІЇ</div>
+  </div>
+  <div class="treatment-wrap" style="margin-top:1rem">
+    <div style="font-size:.75rem;color:#663333;letter-spacing:2px;margin-bottom:.3rem">📈 ПРОГРЕС ЛІКУВАННЯ:</div>
+    <div class="treatment-bar"><div class="treatment-fill" id="treatFill" style="width:0%"></div></div>
+  </div>
+</div>
+ 
+<!-- РЕЄСТРАТУРА -->
+<div class="card">
+  <h2>📋 РЕЄСТРАТУРА БОЖЕВІЛЬНИХ</h2>
+  <div class="fg">
+    <label>🩸 ПІБ пацієнта (справжнє ім'я не важливе)</label>
+    <input type="text" id="pName" placeholder="Ім'я буде вписане кров'ю...">
+  </div>
+  <div class="fg">
+    <label>🧠 Діагноз</label>
+    <select id="pDiag">
+      <option>Гостра параноя</option>
+      <option>Множинна особистість</option>
+      <option>Хронічна нісенітниця</option>
+      <option>Необоротне безумство</option>
+      <option>Мегаломанія стадія IV</option>
+      <option>Некромантична тривога</option>
+      <option>Синдром дзеркального двійника</option>
+      <option>Фобія тиші (остання стадія)</option>
+    </select>
+  </div>
+  <div class="fg">
+    <label>🏥 ПАЛАТА</label>
+    <select id="pWard">
+      <option>Палата 6 — Тихий Жах</option>
+      <option>Палата 13 — Лоботомія</option>
+      <option>Палата 666 — Особлива програма</option>
+      <option>Підвал Б — Без вікон</option>
+      <option>Операційна Ω — Без повернення</option>
+    </select>
+  </div>
+  <button class="btn" id="registerBtn">ЗАЧИНИТИ ДВЕРІ / ЗАРЕЄСТРУВАТИ</button>
+  <div id="patientList"></div>
+</div>
+ 
+<!-- ПРОЦЕДУРИ -->
+<div class="card">
+  <h2>⚗️ МЕНЮ ПРОЦЕДУР</h2>
+  <div class="proc-grid" id="procGrid">
+    <div class="proc-item" data-proc="Лоботомія" data-sanity="25">
+      <span class="proc-icon">🔪</span>
+      <div class="proc-name">Лоботомія</div>
+      <div class="proc-price">-25% розуму</div>
+      <div class="proc-bar"><div class="proc-fill"></div></div>
+    </div>
+    <div class="proc-item" data-proc="Шокова терапія" data-sanity="20">
+      <span class="proc-icon">⚡</span>
+      <div class="proc-name">Шок-терапія</div>
+      <div class="proc-price">-20% розуму</div>
+      <div class="proc-bar"><div class="proc-fill"></div></div>
+    </div>
+    <div class="proc-item" data-proc="Трепанація" data-sanity="30">
+      <span class="proc-icon">🧠</span>
+      <div class="proc-name">Трепанація</div>
+      <div class="proc-price">-30% розуму</div>
+      <div class="proc-bar"><div class="proc-fill"></div></div>
+    </div>
+    <div class="proc-item" data-proc="Кровопускання" data-sanity="15">
+      <span class="proc-icon">🩸</span>
+      <div class="proc-name">Кровопускання</div>
+      <div class="proc-price">-15% розуму</div>
+      <div class="proc-bar"><div class="proc-fill"></div></div>
+    </div>
+    <div class="proc-item" data-proc="Примусовий гіпноз" data-sanity="10">
+      <span class="proc-icon">🌀</span>
+      <div class="proc-name">Гіпноз</div>
+      <div class="proc-price">-10% розуму</div>
+      <div class="proc-bar"><div class="proc-fill"></div></div>
+    </div>
+    <div class="proc-item" data-proc="Ін'єкція невідомого" data-sanity="35">
+      <span class="proc-icon">💉</span>
+      <div class="proc-name">Ін'єкція ???</div>
+      <div class="proc-price">-35% розуму</div>
+      <div class="proc-bar"><div class="proc-fill"></div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ПОПЕРЕДЖЕННЯ -->
+<div style="background:rgba(30,0,0,.85);border:1px solid #8b0000;border-radius:12px;
+  padding:1rem;text-align:center;margin:1rem 0;box-shadow:0 0 12px darkred">
+  <div style="font-family:'VT323',monospace;font-size:1.5rem;color:#c44;letter-spacing:3px">
+    ⚠️ ВИХІД ЗАБЛОКОВАНО ⚠️
+  </div>
+  <div style="font-size:.9rem;color:#884444;margin-top:.5rem;letter-spacing:1px">
+    Шум у голові — це норма &nbsp;|&nbsp; Сусід за стіною — дзеркало &nbsp;|&nbsp; Ти вже один з нас
+  </div>
+</div>
+ 
+<!-- СЕКРЕТНА ПАНЕЛЬ -->
+<div id="secretPanel">
+  <div style="font-family:'VT323',monospace;color:#00aa00;font-size:1.1rem;text-align:center;letter-spacing:2px">
+    🔓 РІВЕНЬ ДОСТУПУ: ДОКТОР РІМУС — ПОВНА САНАЦІЯ ЗАВЕРШЕНА
+  </div>
+  <div id="secretCode">КОД: ЗОМБІ-ПРОТОКОЛ-Ω</div>
+  <div style="font-size:.8rem;color:#006600;text-align:center;margin-top:.5rem;letter-spacing:1px">
+    Дякуємо. Ваш розум тепер належить клініці. Ви — один з нас.
+  </div>
+</div>
+ 
+<div class="hazard-strip"></div>
+ 
+<footer>
+  © Санаторій «Червоний Хрест» 1943–∞ &nbsp;|&nbsp; Вихід заблоковано назавжди &nbsp;|&nbsp; 🩸💀🩸
+  <br><span style="font-size:.7rem;opacity:.4;margin-top:.3rem;display:block">
+    Доктор Рімус завжди спостерігає. Версія: Ω.13.666
+  </span>
+</footer>
+</div>
+ 
+<script>
+// ===== СТАН =====
+let sanity=100, procedureCount=0, patientCount=0, treatProgress=0;
+let lastClick=0, lastToast=0, audioCtx=null, audioUnlocked=false;
+const patients=[];
+ 
+// ===== КУРСОР =====
+const cur=document.getElementById('cursor');
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px';
+  cur.style.top=my+'px';
+  if(Math.random()<.15) spawnTrail(mx,my);
+});
+ 
+function spawnTrail(x,y){
+  const t=document.createElement('div');
+  t.className='trail';
+  const ox=(Math.random()-.5)*10, oy=(Math.random()-.5)*10;
+  t.style.left=(x+ox)+'px';
+  t.style.top=(y+oy)+'px';
+  t.style.width=t.style.height=Math.random()*5+2+'px';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),700);
+}
+ 
+// ===== КРАПЛІ КРОВІ ЗВЕРХУ =====
+function createDrips(){
+  for(let i=0;i<20;i++){
+    const d=document.createElement('div');
+    d.className='blood-drip';
+    d.style.left=Math.random()*100+'%';
+    d.style.width=Math.random()*5+2+'px';
+    d.style.height=Math.random()*35+12+'px';
+    const dur=Math.random()*3+1.5;
+    d.style.animationDuration=dur+'s';
+    d.style.animationDelay=Math.random()*8+'s';
+    document.body.appendChild(d);
+  }
+}
+createDrips();
+ 
+// ===== ПЛАВАЮЧІ СИМВОЛИ =====
+const floatSyms=['🩸','💀','⚰️','🕯️','👁️','🔪','🧠','💉','🔮','☠️'];
+function spawnFloater(){
+  const f=document.createElement('div');
+  f.className='floater';
+  f.textContent=floatSyms[Math.floor(Math.random()*floatSyms.length)];
+  f.style.left=Math.random()*100+'%';
+  f.style.bottom='0';
+  const dur=Math.random()*12+8;
+  f.style.animationDuration=dur+'s';
+  f.style.animationDelay=Math.random()*4+'s';
+  f.style.fontSize=Math.random()*2+.8+'rem';
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),dur*1000+4000);
+}
+setInterval(()=>spawnFloater(),2500);
+for(let i=0;i<8;i++) setTimeout(()=>spawnFloater(),i*800);
+ 
+// ===== СПАЛАХ =====
+const flash=document.getElementById('flash');
+function redFlash(dur=200){
+  flash.style.opacity='.25';
+  setTimeout(()=>flash.style.opacity='0',dur);
+}
+function bigFlash(){
+  flash.style.opacity='.75';
+  setTimeout(()=>flash.style.opacity='0',180);
+}
+ 
+// ===== ТРЯСІННЯ =====
+function shakeBody(){
+  document.body.classList.add('shake');
+  setTimeout(()=>document.body.classList.remove('shake'),320);
+}
+ 
+// ===== КЛІКОВИЙ СПЛАТ =====
+const splatEmojis=['🩸','💀','🔴','🟥','✝️'];
+document.addEventListener('click',e=>{
+  // Сплат
+  const s=document.createElement('div');
+  s.className='splat';
+  s.textContent=splatEmojis[Math.floor(Math.random()*splatEmojis.length)];
+  s.style.left=e.clientX-15+'px';
+  s.style.top=e.clientY-15+'px';
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),900);
+  // Аудіо при першому кліку
+  if(!audioUnlocked){initAudio();audioUnlocked=true;}
+  // Тост
+  const now=Date.now();
+  if(now-lastClick>1200 && now-lastToast>800){
+    showRandomToast(); lastClick=now;
+  }
+});
+ 
+// ===== ТОСТ =====
+let activeToast=null;
+const toastMsgs=[
+  '🔪 ТИ ЧУВ КРОКИ ЗА СПИНОЮ?',
+  '👁️ ВОНИ СПОСТЕРІГАЮТЬ ПРЯМО ЗАРАЗ',
+  '🩸 КРОВ У ТВОЇХ ЖИЛАХ — НЕ ТВОЯ',
+  '🧠 ЛОБОТОМІЯ ЧЕКАЄ О 3:00',
+  '🗣️ СТІНИ ШЕПОЧУТЬ ТВОЄ ІМ\'Я',
+  '💀 ЗА ДВЕРИМА — НІЧОГО. ТІЛЬКИ МИ.',
+  '🕯️ КОЖНА ДУМКА ЗАПИСАНА КРО\'ЮВ',
+  '📞 ТВОЇ РІДНІ ВЖЕ В ПАЛАТІ 6',
+  '🚪 ЗАМОК ЗАЧИНЕНО З НАШОГО БОКУ',
+  '🩺 ДОКТОР РІМУС БАЧИТЬ ВСЕ',
+  '🔴 СПРОБА ВТЕЧІ ЗАФІКСОВАНА',
+  '👣 7 КРОКІВ ДО ОПЕРАЦІЙНОЇ',
+  '🌑 ТИ ЗАВЖДИ БУВ ТУПИМ, САМЕ ТОМУ ТИ ТУТ',
+  '💊 ПРИЙМИ ТАБЛЕТКУ. ВСІ ЇЇ ПРИЙМАЮТЬ.',
+  '🔬 ЗРАЗКИ ВЗЯТО. ДЯКУЄМО.',
+];
+function showToast(msg,dur=2300){
+  if(activeToast) activeToast.remove();
+  const t=document.createElement('div');
+  t.className='toast in';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  activeToast=t;
+  setTimeout(()=>{
+    t.classList.remove('in');
+    t.classList.add('out');
+    setTimeout(()=>t.remove(),500);
+    lastToast=Date.now();
+  },dur);
+}
+function showRandomToast(){
+  showToast(toastMsgs[Math.floor(Math.random()*toastMsgs.length)]);
+}
+ 
+// ===== ГЛЮЧ ЗАГОЛОВКУ =====
+const title=document.getElementById('mainTitle');
+const glitchTexts=[
+  'Кліні_ка «Кр##воний Хрест»',
+  '>>> SYSTEM_ERROR <<<',
+  'КЛ_ІН_ІКА ॐ «Ω»',
+  '[[[ТИ НЕ ВИЙДЕШ]]]',
+  'К̸Л̴І̵Н̶І̷К̸А̷ ЗАГИБЕЛІ',
+  'ДОКТОР РІМУС ЧЕКАЄ',
+];
+function triggerGlitch(){
+  const orig='Клініка «Червоний Хрест»';
+  title.classList.add('glitch');
+  title.textContent=glitchTexts[Math.floor(Math.random()*glitchTexts.length)];
+  redFlash(150);
+  setTimeout(()=>{title.textContent=orig;title.classList.remove('glitch');},320);
+}
+setInterval(triggerGlitch,7000);
+ 
+// ===== ПІДЗАГОЛОВОК ГЛЮЧ =====
+const subtitleGlitches=[
+  '— Ти вже тут. Назавжди. —',
+  '— [ЗВ\'ЯЗОК РОЗІРВАНО] —',
+  '— Один з нас. —',
+  '— Д_О_К_Т_О_Р_Р_І_М_У_С —',
+  '— Error 404: Reality Not Found —',
+  '— ВИХОДУ НЕМАЄ —',
+];
+setInterval(()=>{
+  const s=document.getElementById('subtitle');
+  const orig='— Ти вже тут. Назавжди. —';
+  const pick=subtitleGlitches[Math.floor(Math.random()*subtitleGlitches.length)];
+  s.textContent=pick;
+  setTimeout(()=>{if(s.textContent!=='— Один з нас. —') s.textContent=orig;},450);
+},9000);
+ 
+// ===== РОЗУМ =====
+function drainSanity(amt){
+  sanity=Math.max(0,sanity-amt);
+  updateSanityUI();
+  if(sanity<=0) onMadness();
+  else if(sanity<30) applyLowSanityEffects();
+}
+function updateSanityUI(){
+  document.getElementById('sanityFill').style.width=sanity+'%';
+  document.getElementById('sanityVal').textContent=sanity+'%';
+  const fill=document.getElementById('sanityFill');
+  if(sanity>60) fill.style.background='linear-gradient(90deg,#8b0000,#ff3333)';
+  else if(sanity>30) fill.style.background='linear-gradient(90deg,#660000,#cc2200)';
+  else fill.style.background='linear-gradient(90deg,#400000,#880000)';
+}
+function applyLowSanityEffects(){
+  const hue=Math.random()*20;
+  const con=1+(0.4-sanity/100)*0.8;
+  document.body.style.filter=`hue-rotate(${hue}deg) contrast(${con})`;
+  setTimeout(()=>document.body.style.filter='',600);
+}
+function onMadness(){
+  bigFlash(); shakeBody();
+  document.getElementById('secretPanel').classList.add('visible');
+  document.getElementById('subtitle').textContent='— Один з нас. Один з нас. —';
+  showToast('🌀 РОЗУМ ЗРУЙНОВАНО. ЛАСКАВО ПРОСИМО ДО НАС.',4500);
+  for(let i=0;i<25;i++) setTimeout(()=>spawnFloater(),i*100);
+}
+ 
+// ===== ТАЙМЕР =====
+let timerTarget=Date.now()+3*60*1000+17*1000+44*1000;
+function updateTimer(){
+  const diff=timerTarget-Date.now();
+  if(diff<=0){
+    document.getElementById('timerDisplay').textContent='00:00:00';
+    bigFlash(); shakeBody();
+    showToast('💉 ПРОЦЕДУРА РОЗПОЧАТА! ТРИМАЙСЯ МІЦНО.',3200);
+    timerTarget=Date.now()+Math.random()*5*60*1000+90*1000;
+    drainSanity(5);
+    return;
+  }
+  const h=Math.floor(diff/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  document.getElementById('timerDisplay').textContent=
+    String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+setInterval(updateTimer,1000); updateTimer();
+ 
+// Прогрес лікування
+setInterval(()=>{
+  treatProgress=Math.min(100,treatProgress+0.4);
+  document.getElementById('treatFill').style.width=treatProgress+'%';
+  if(treatProgress>=100){
+    bigFlash(); shakeBody();
+    showToast('☠️ ЛІКУВАННЯ ЗАВЕРШЕНО. ПАЦІЄНТ ГОТОВИЙ.',3800);
+    treatProgress=0;
+    drainSanity(6);
+    playBeep(110,0.4,0.8);
+  }
+},1000);
+ 
+// ===== РЕЄСТРАЦІЯ =====
+const registerBtn=document.getElementById('registerBtn');
+registerBtn.addEventListener('mouseenter',()=>{
+  registerBtn.textContent='НАЗАД ШЛЯХУ НЕМАЄ — ПІДПИШИ';
+  redFlash();
+});
+registerBtn.addEventListener('mouseleave',()=>{
+  registerBtn.textContent='ЗАЧИНИТИ ДВЕРІ / ЗАРЕЄСТРУВАТИ';
+});
+registerBtn.addEventListener('click',()=>{
+  const name=document.getElementById('pName').value.trim()||'Безіменний грішник';
+  const diag=document.getElementById('pDiag').value;
+  const ward=document.getElementById('pWard').value;
+  const statuses=['critical','stable','deceased'];
+  const st=statuses[Math.floor(Math.random()*statuses.length)];
+  patients.unshift({name,diag,ward,st});
+  patientCount++;
+  document.getElementById('cPatients').textContent=patientCount;
+  renderPatients();
+  bigFlash(); shakeBody();
+  showToast(`🚪 ${name} — зареєстровано. Двері зачинено навіки.`,2800);
+  drainSanity(8);
+  document.getElementById('pName').value='';
+  spawnWhisper(name+' — тепер назавжди');
+  playBeep(330,0.3,0.4);
+});
+ 
+function renderPatients(){
+  const list=document.getElementById('patientList');
+  const stLabel={critical:'КРИТИЧНИЙ',stable:'СТАБІЛЬНИЙ',deceased:'НЕВІДОМО'};
+  list.innerHTML=patients.slice(0,8).map(p=>`
+    <div class="patient-row">
+      <div>
+        <div style="font-size:.85rem;color:#cc5555">${p.name}</div>
+        <div style="font-size:.7rem;color:#553333">${p.diag} | ${p.ward.split('—')[0].trim()}</div>
+      </div>
+      <span class="p-badge ${p.st}">${stLabel[p.st]}</span>
+    </div>`).join('');
+}
+ 
+// ===== ПРОЦЕДУРИ =====
+document.querySelectorAll('.proc-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const proc=item.dataset.proc;
+    const san=parseInt(item.dataset.sanity);
+    procedureCount++;
+    document.getElementById('cProcedures').textContent=procedureCount;
+    const fill=item.querySelector('.proc-fill');
+    fill.style.width='100%';
+    setTimeout(()=>fill.style.width='0%',900);
+    redFlash(); shakeBody();
+    drainSanity(Math.floor(san*0.35));
+    showToast(`🩺 ${proc} — розпочато! -${Math.floor(san*0.35)}% розуму`,2200);
+    spawnWhisper(proc+'...');
+    playBeep(440+Math.random()*200,0.3,0.35);
+  });
+});
+ 
+// ===== ШЕПІТ =====
+function spawnWhisper(text){
+  const w=document.createElement('div');
+  w.className='whisper';
+  w.textContent=text;
+  w.style.left=Math.random()*65+'%';
+  w.style.top=Math.random()*55+15+'%';
+  document.body.appendChild(w);
+  setTimeout(()=>w.remove(),4200);
+}
+ 
+// ===== PA ОГОЛОШЕННЯ =====
+const paMsg=[
+  '📢 ПАЦІЄНТ У ПАЛАТІ 6 ЗНОВУ СПРОБУВАВ ВТЕКТИ. БЛОКУЄМО ВСІ ВИХОДИ.',
+  '📢 ДОКТОР РІМУС ЗАПРОШУЄТЬСЯ ДО ОПЕРАЦІЙНОЇ №13. СКАЛЬПЕЛІ ГОТОВІ.',
+  '📢 УВАГА: НІЧНА ЗМІНА КАТІВ ПРИСТУПАЄ ДО ОБОВ\'ЯЗКІВ.',
+  '📢 ТИХИЙ ЧАС. КРИКИ ДОЗВОЛЯЮТЬСЯ ТІЛЬКИ ДО 23:00.',
+  '📢 НАГАДУЄМО: ВИХІД — ЦЕ МІФ. РЕЄСТРАЦІЯ НА ВИПИСКУ ЗАКРИТА НАЗАВЖДИ.',
+  '📢 УВАГА: ВТЕЧА З ПАЛАТИ 13 ЗУПИНЕНА. ПРОТОКОЛ Ω АКТИВОВАНО.',
+  '📢 НАСТУПНА ГРУПОВА ЛОБОТОМІЯ — О 03:00. ЯВКА ОБОВ\'ЯЗКОВА.',
+  '📢 ЗАБОРОНЯЄТЬСЯ ДИВИТИСЯ В СТІНУ БІЛЬШЕ 3 ХВИЛИН ПІДРЯД.',
+];
+let paIdx=0;
+const paEl=document.getElementById('paAnnounce');
+function showPA(){
+  paEl.textContent=paMsg[paIdx%paMsg.length];
+  paEl.classList.add('show');
+  setTimeout(()=>paEl.classList.remove('show'),5500);
+  paIdx++;
+  drainSanity(2);
+}
+setTimeout(showPA,2500);
+setInterval(showPA,22000);
+ 
+// ===== АУДІО =====
+function initAudio(){
+  try{
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    // Початковий гул
+    const osc=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    osc.type='sine'; osc.frequency.value=60;
+    g.gain.setValueAtTime(0.1,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+4);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime+4);
+    showToast('👻 Голоси прокинулись... Вони тебе чують.',2500);
+  }catch(e){}
+}
+function playBeep(freq,vol=0.2,dur=0.3){
+  if(!audioCtx) return;
+  try{
+    const osc=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    osc.frequency.value=freq;
+    osc.type='sawtooth';
+    g.gain.setValueAtTime(vol,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime+dur);
+  }catch(e){}
+}
+ 
+// ===== БЛОК КОНТЕКСТНОГО МЕНЮ =====
+document.addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  showToast('❌ МЕНЮ ЗАБЛОКОВАНО ДОКТОРОМ РІМУСОМ');
+  redFlash();
+});
+ 
+// ===== ЛІЧИЛЬНИК ДНІВ =====
+document.getElementById('daysBox').addEventListener('mouseenter',()=>{
+  document.getElementById('cDays').textContent=Math.floor(Math.random()*-99);
+  redFlash(100);
+});
+document.getElementById('daysBox').addEventListener('mouseleave',()=>{
+  document.getElementById('cDays').textContent='-1';
+});
+ 
+// ===== ФОНОВІ ПАСИВНІ ЕФЕКТИ =====
+// Рандомний шепіт
+const whispers=['Тікай...','Залишайся...','Ми чекаємо...','Шш...','Чуєш нас?','Один з нас...','Назавжди...'];
+setInterval(()=>{
+  if(Math.random()<.35) spawnWhisper(whispers[Math.floor(Math.random()*whispers.length)]);
+},8000);
+// Рандомний спалах
+setInterval(()=>{
+  if(Math.random()<.2){ redFlash(120); if(audioUnlocked) playBeep(200+Math.random()*80,0.12,0.25); }
+},7000);
+// Рандомний глюч
+setInterval(()=>{
+  if(Math.random()<.15) triggerGlitch();
+  drainSanity(1);
+},11000);
+// Рандомний тост
+setInterval(()=>{
+  if(Math.random()<.4) showRandomToast();
+},18000);
+ 
+// ===== ПОЧАТКОВІ ПОВІДОМЛЕННЯ =====
+setTimeout(()=>showToast('🩸 Ласкаво просимо додому, пацієнте... Вихід замуровано.',3000),1200);
+setTimeout(()=>spawnWhisper('Ти чуєш нас?..'),3000);
+setTimeout(()=>showToast('💀 УВАГА: ВАШ РОЗУМ — ВЛАСНІСТЬ КЛІНІКИ.',2800),8000);
+</script>
+</body>
+</html>
